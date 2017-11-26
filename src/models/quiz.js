@@ -8,6 +8,9 @@ export default {
   namespace: 'quiz',
 
   state: {
+    userId: 'testUser',
+    userName: 'Test User',
+    quizId: 'testQuiz',
     quiz_loading: true,
     quiz_submitting: false,
     quiz_result: false,
@@ -31,17 +34,25 @@ export default {
       }));
       yield put({ type: 'set_quiz', payload: { questions } });
     },
-    *submit_quiz({ payload },{ call,put }){
-
+    *submit_quiz({ payload },{ call,put, select }){
+      const quiz_response = yield select((state)=>{
+        return {
+          questions: state.quiz.questions,
+          userId: state.quiz.userId,
+          userName: state.quiz.userName,
+          quizId: state.quiz.quizId
+        }
+      });
+      console.log('Quiz Response ', quiz_response );
       yield put({ type: 'set_quiz_submitting'});
 
       const result = yield call(()=>new Promise((resolve, reject)=>{
-        setTimeout(()=>{
-          resolve("Passed")
-        }, 1000)
+        const quizResponseKey = firebaseDatabase.ref().child('quiz_responses').push().key;
+        const updates = {};
+        updates[`/quiz_responses/${quiz_response.userId}/${quiz_response.quizId}`] = quiz_response;
+        firebase.database().ref().update(updates).then(resolve).catch(reject);
       }));
-
-      yield put({ type: 'set_result', payload: { quiz_result : result } });
+      yield put({ type: 'set_result', payload: { quiz_result : 'Quiz submitted successfully' } });
     }
   },
 
