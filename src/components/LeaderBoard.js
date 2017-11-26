@@ -42,10 +42,10 @@ class LeaderBoard extends React.Component {
       const { userRank } = this.props;
         return (
             <div>
-                <Table columns={columns} dataSource={sortedData} bordered title={() => 'Leader Board'} />
               { userRank != null ? <h2 style={{textAlign: "center"}}>
                 You got { userRank.points} points in { userRank.timetaken } seconds.
               </h2> : 'You have not participated.' }
+              <Table columns={columns} dataSource={sortedData} pagination={false} bordered title={() => 'Leader Board'} />
             </div>
         );
     }
