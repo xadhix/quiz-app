@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../index.css';
 import { Form, Row, Col, Button, Icon, Radio, Input } from 'antd';
+import { Link } from 'dva/router';
 const FormItem = Form.Item;
 require('antd/dist/antd.css');
 
@@ -43,6 +44,7 @@ class StartPage extends React.Component {
           >
             Proceed to Quiz
           </Button>
+          <Link to="quiz">Quiz</Link>
         </FormItem>
       </Form>
     );
