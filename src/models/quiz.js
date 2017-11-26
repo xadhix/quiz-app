@@ -8,12 +8,13 @@ export default {
   namespace: 'quiz',
 
   state: {
-    userId: 'testUser',
+    userId: 'testUser2',
     userName: 'Test User',
-    quiz_id: 'testQuiz',
+    quizId: 'testQuiz',
     quiz_loading: true,
     quiz_submitting: false,
     quiz_result: false,
+    leaderboard: {},
     questions: []
   },
 
@@ -21,10 +22,14 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {  // eslint-disable-line
       dispatch({ type: 'fetch_quiz' })
+      const leaderBoardRef = firebaseDatabase.ref(`leaderboard`);
+      leaderBoardRef.on('value', function(snapshot) {
+        dispatch({ type: 'set_leaderboard', payload: snapshot.val()})
+      });
     },
   },
 
-  effects: {
+  effects: {}
     *fetch_quiz({ payload }, { call, put }) {  // eslint-disable-line
       const quizIdRef = firebaseDatabase.ref('current_quiz');
       const quizId = yield call( ()=>new Promise((resolve,  reject)=>{
@@ -39,7 +44,7 @@ export default {
           resolve(snapshot.val());
         });
       }));
-      yield put({ type: 'set_quiz', payload: { quiz_id: quizId, questions } });
+      yield put({ type: 'set_quiz', payload: { quizId: quizId, questions } });
     },
     *submit_quiz({ payload },{ call,put, select }){
       const quiz_response = yield select((state)=>{
@@ -47,20 +52,19 @@ export default {
           questions: state.quiz.questions,
           userId: state.quiz.userId,
           userName: state.quiz.userName,
-          quiz_id: state.quiz.quiz_id
+          quizId: state.quiz.quizId
         }
       });
       console.log('Quiz Response ', quiz_response );
       yield put({ type: 'set_quiz_submitting'});
 
       const result = yield call(()=>new Promise((resolve, reject)=>{
-        const quizResponseKey = firebaseDatabase.ref().child('quiz_responses').push().key;
         const updates = {};
-        updates[`/quiz_responses/${quiz_response.userId}/${quiz_response.quiz_id}`] = quiz_response;
+        updates[`/quiz_responses/${quiz_response.userId}/${quiz_response.quizId}`] = quiz_response;
         firebase.database().ref().update(updates).then(resolve).catch(reject);
       }));
       yield put({ type: 'set_result', payload: { quiz_result : 'Quiz submitted successfully' } });
-    }
+    },
   },
 
   reducers: {
@@ -84,6 +88,9 @@ export default {
     },
     set_quiz_loading(state, action){
       return { ...state, quiz_loading: true,};
+    },
+    set_leaderboard(state, action){
+      return { ...state, leaderboard: action.payload };
     }
   },
 
