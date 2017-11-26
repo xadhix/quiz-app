@@ -29,7 +29,7 @@ export default {
     },
   },
 
-  effects: {}
+  effects: {
     *fetch_quiz({ payload }, { call, put }) {  // eslint-disable-line
       const quizIdRef = firebaseDatabase.ref('current_quiz');
       const quizId = yield call( ()=>new Promise((resolve,  reject)=>{
