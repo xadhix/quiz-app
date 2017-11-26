@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import '../index.css';
 import { Form, Row, Col, Button, Icon, Radio, Input } from 'antd';
 const FormItem = Form.Item;
 require('antd/dist/antd.css');

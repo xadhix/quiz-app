@@ -4,6 +4,8 @@ const { Header, Content, Footer } = Layout;
 import { Router, Route, Switch, Link } from 'dva/router';
 import IndexPage from './routes/IndexPage';
 import QuizPage from './routes/QuizPage';
+import StartPage from './components/StartPage';
+import LeaderBoard from './components/LeaderBoard';
 
 function RouterConfig({ history }) {
   return (
@@ -33,6 +35,8 @@ function RouterConfig({ history }) {
             <Switch>
               <Route path="/" exact component={IndexPage} />
               <Route path="/quiz" exact component={QuizPage} />
+              <Route path="/startPage" exact component={StartPage} />
+              <Route path="/leaderboard" exact component={LeaderBoard} />
             </Switch>
           </div>
         </Content>
