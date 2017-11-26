@@ -8,14 +8,16 @@ export default {
   namespace: 'quiz',
 
   state: {
-    userId: 'testUser2',
-    userName: 'Test User',
-    quizId: 'testQuiz',
+    userId: '',
+    userName: '',
+    quizId: '',
     quiz_loading: true,
     quiz_submitting: false,
     quiz_result: false,
     leaderboard: {},
-    questions: []
+    questions: [],
+    quiz_start: null,
+
   },
 
 
@@ -52,7 +54,8 @@ export default {
           questions: state.quiz.questions,
           userId: state.quiz.userId,
           userName: state.quiz.userName,
-          quizId: state.quiz.quizId
+          quizId: state.quiz.quizId,
+          timetaken: (new Date() - state.quiz.quiz_start)/1000,
         }
       });
       console.log('Quiz Response ', quiz_response );
@@ -64,6 +67,7 @@ export default {
         firebase.database().ref().update(updates).then(resolve).catch(reject);
       }));
       yield put({ type: 'set_result', payload: { quiz_result : 'Quiz submitted successfully' } });
+      location.replace("#/leaderboard")
     },
   },
 
@@ -78,19 +82,22 @@ export default {
       return { ...state, questions };
     },
     set_quiz(state, action){
-      return { ...state, quiz_loading: false, ...action.payload};
+      return { ...state, quiz_loading: false, quiz_start: new Date(), ...action.payload};
     },
     set_quiz_submitting(state, action){
       return { ...state, quiz_submitting: true };
     },
     set_result(state, action){
-      return { ...state, quiz_submitting: false, ...action.payload };
+      return { ...state, quiz_submitting: false, ...action.payload, quiz_start: null };
     },
     set_quiz_loading(state, action){
       return { ...state, quiz_loading: true,};
     },
     set_leaderboard(state, action){
       return { ...state, leaderboard: action.payload };
+    },
+    set_user(state, action){
+      return { ...state, ...action.payload, quiz_result: false };
     }
   },
 

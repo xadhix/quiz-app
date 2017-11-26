@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from "dva";
 import '../index.css';
 require('antd/dist/antd.css');
+
 class ShowTimer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            elapsed: 0
+            currentDate: new Date()
         }
     }
     componentDidMount() {
@@ -18,13 +20,21 @@ class ShowTimer extends React.Component {
     }
 
     tick = () => {
-        this.setState({ elapsed: new Date() - this.props.start });
+        const { start } = this.props;
+        if( start ) {
+          this.setState({ currentDate: new Date() });
+        }
     }
     render() {
-        var elapsed = Math.round(this.state.elapsed / 100);
+      const { currentDate } = this.state;
+      const { start } = this.props;
+      if( start && currentDate ){
+        var elapsed = Math.round( (currentDate - start) / 100);
         var seconds = (elapsed / 10).toFixed(1);
-        return <p><b><div id="timerPara">{seconds} </div> seconds</b></p>;
+        return <p><b><div id="timerDiv">{seconds}</div> seconds</b></p>;
+      }
+      return null;
     }
 }
 
-export default ShowTimer;
+export default connect((state)=>({ start : state.quiz.quiz_start }))(ShowTimer);

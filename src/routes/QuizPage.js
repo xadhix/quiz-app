@@ -11,7 +11,7 @@ const rowStyle = {
 class QuizPage extends React.Component {
   submitQuiz = () => {
     const { dispatch } = this.props;
-    dispatch({ type: 'quiz/submit_quiz' })
+    dispatch({ type: 'quiz/submit_quiz'})
   }
   saveAnswer = (questionId, answer) => {
     const { dispatch } = this.props;

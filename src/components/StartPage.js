@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'dva';
 import ReactDOM from 'react-dom';
 import '../index.css';
 import { Form, Row, Col, Button, Icon, Radio, Input } from 'antd';
@@ -19,7 +20,12 @@ class StartPage extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.props.history.push('/quiz');
+    const { userName, sapID } = this.state;
+    this.props.dispatch({type: 'quiz/set_user', payload: {
+      userName: userName,
+      userId: sapID
+    }})
+    location.replace("#/quiz")
   }
   handleNameChange = (e) => {
     this.setState({ userName: e.target.value })
@@ -46,7 +52,6 @@ class StartPage extends React.Component {
               >
                 Proceed to Quiz
           </Button>
-              <Link to="quiz">Quiz</Link>
             </FormItem>
           </Form>
         </div>
@@ -64,4 +69,14 @@ class StartPage extends React.Component {
     );
   }
 }
-export default StartPage;
+function mapStateToProps(state) {
+  return {
+    userId: state.quiz.userId,
+    userName: state.quiz.userName,
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return { dispatch: dispatch }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StartPage);

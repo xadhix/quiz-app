@@ -2,6 +2,7 @@ import React from 'react';
 import '../index.css';
 import { Table } from 'antd';
 require('antd/dist/antd.css');
+import { connect } from 'dva';
 
 const columns = [{
     title: 'Name',
@@ -21,57 +22,62 @@ const columns = [{
     key: 'timetaken',
 }];
 
-const data = [{
-    key: '1',
-    name: 'John Brown',
-    userid: 'i23145',
-    points: 9,
-    timetaken: 120,
-}, {
-    key: '2',
-    name: 'Obama',
-    userid: 'i325235',
-    points: 10,
-    timetaken: 150,
-}, {
-    key: '3',
-    name: 'Trump',
-    userid: 'i12342',
-    points: 2,
-    timetaken: 89,
-}];
-
 class LeaderBoard extends React.Component {
-    createRow(sn, uname, userId, pointTotal, time) {
-        let rowObj = {
-            key: sn,
-            name: uname,
-            userid: userId,
-            points: pointTotal,
-            timetaken: time
-        };
-        data.push(rowObj);
-    }
-    sortData() {
+    sortData = ()=>{
+      const { data } = this.props;
+      const sortedData = [...data];
         var cmp = function (x, y) {
             return x > y ? 1 : x < y ? -1 : 0;
         }
-        data.sort(function (a, b) {
+      sortedData.sort(function (a, b) {
             return cmp(
                 [-cmp(a.points, b.points), cmp(a.timetaken, b.timetaken)],
                 [-cmp(b.points, a.points), cmp(b.timetaken, a.timetaken)]
             );
         })
+      return sortedData;
     }
     render() {
+      const sortedData = this.sortData();
+      const { userRank } = this.props;
         return (
-            <div>{this.createRow(4, 'jay', 'i32423', 8, 90)}{this.createRow(5, 'ajay', 'i765553', 8, 70)}
-                {this.createRow(6, 'beta', 'i765553', 10, 50)}
-                {this.sortData()}
-                <Table columns={columns} dataSource={data} bordered title={() => 'Leader Board'} />
+            <div>
+                <Table columns={columns} dataSource={sortedData} bordered title={() => 'Leader Board'} />
+              { userRank != null ? <h2 style={{textAlign: "center"}}>
+                You got { userRank.points} points in { userRank.timetaken } seconds.
+              </h2> : 'You have not participated.' }
             </div>
         );
     }
 }
 
-export default LeaderBoard;
+
+function mapStateToProps(state) {
+  let data = [];
+  const quizId = state.quiz.quizId;
+  let userRank = null;
+
+  if( state.quiz.leaderboard && state.quiz.leaderboard[quizId] ){
+    const leaderBoard = state.quiz.leaderboard[quizId];
+
+    for( const key in leaderBoard ){
+      if( state.quiz.userId ) {
+        if (key === state.quiz.userId) {
+          userRank = leaderBoard[key]
+        }
+      }
+      data.push({...leaderBoard[key], key});
+    }
+  }
+  return {
+    userId: state.quiz.userId,
+    userName: state.quiz.userName,
+    userRank,
+    data
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return { dispatch: dispatch }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LeaderBoard);
