@@ -82,7 +82,7 @@ export default {
       return { ...state, questions };
     },
     set_quiz(state, action){
-      return { ...state, quiz_loading: false, quiz_start: new Date(), ...action.payload};
+      return { ...state, quiz_loading: false, ...action.payload};
     },
     set_quiz_submitting(state, action){
       return { ...state, quiz_submitting: true };
@@ -97,7 +97,7 @@ export default {
       return { ...state, leaderboard: action.payload };
     },
     set_user(state, action){
-      return { ...state, ...action.payload, quiz_result: false };
+      return { ...state, ...action.payload, quiz_result: false,  quiz_start: new Date() };
     }
   },
 
