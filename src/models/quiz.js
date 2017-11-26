@@ -10,7 +10,7 @@ export default {
   state: {
     userId: 'testUser',
     userName: 'Test User',
-    quizId: 'testQuiz',
+    quiz_id: 'testQuiz',
     quiz_loading: true,
     quiz_submitting: false,
     quiz_result: false,
@@ -26,13 +26,20 @@ export default {
 
   effects: {
     *fetch_quiz({ payload }, { call, put }) {  // eslint-disable-line
-      const questionsRef = firebaseDatabase.ref('questions');
+      const quizIdRef = firebaseDatabase.ref('current_quiz');
+      const quizId = yield call( ()=>new Promise((resolve,  reject)=>{
+        quizIdRef.once('value', function(snapshot) {
+          resolve(snapshot.val());
+        });
+      }));
+
+      const questionsRef = firebaseDatabase.ref(`${quizId}/questions`);
       const questions = yield call( ()=>new Promise((resolve,  reject)=>{
         questionsRef.once('value', function(snapshot) {
           resolve(snapshot.val());
         });
       }));
-      yield put({ type: 'set_quiz', payload: { questions } });
+      yield put({ type: 'set_quiz', payload: { quiz_id: quizId, questions } });
     },
     *submit_quiz({ payload },{ call,put, select }){
       const quiz_response = yield select((state)=>{
@@ -40,7 +47,7 @@ export default {
           questions: state.quiz.questions,
           userId: state.quiz.userId,
           userName: state.quiz.userName,
-          quizId: state.quiz.quizId
+          quiz_id: state.quiz.quiz_id
         }
       });
       console.log('Quiz Response ', quiz_response );
@@ -49,7 +56,7 @@ export default {
       const result = yield call(()=>new Promise((resolve, reject)=>{
         const quizResponseKey = firebaseDatabase.ref().child('quiz_responses').push().key;
         const updates = {};
-        updates[`/quiz_responses/${quiz_response.userId}/${quiz_response.quizId}`] = quiz_response;
+        updates[`/quiz_responses/${quiz_response.userId}/${quiz_response.quiz_id}`] = quiz_response;
         firebase.database().ref().update(updates).then(resolve).catch(reject);
       }));
       yield put({ type: 'set_result', payload: { quiz_result : 'Quiz submitted successfully' } });
