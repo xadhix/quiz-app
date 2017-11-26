@@ -29,24 +29,38 @@ class StartPage extends React.Component {
   }
   render() {
     return (
-      <Form layout="inline" onSubmit={this.handleSubmit}>
-        <FormItem>
-          {<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} onChange={this.handleNameChange} value={this.state.userName} placeholder="Your Name" />}
-        </FormItem>
-        <FormItem>
-          {<Input prefix={<Icon type="idcard" style={{ fontSize: 13 }} />} type="user" placeholder="SAP ID" onChange={this.handleIdChange} value={this.state.sapID}/>}
-        </FormItem>
-        <FormItem>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={!(this.state.sapID && this.state.userName)}
-          >
-            Proceed to Quiz
+      <div>
+        <div>
+          <Form layout="inline" onSubmit={this.handleSubmit}>
+            <FormItem>
+              {<Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} onChange={this.handleNameChange} value={this.state.userName} placeholder="Your Name" />}
+            </FormItem>
+            <FormItem>
+              {<Input prefix={<Icon type="idcard" style={{ fontSize: 13 }} />} type="user" placeholder="SAP ID" onChange={this.handleIdChange} value={this.state.sapID} />}
+            </FormItem>
+            <FormItem>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={!(this.state.sapID && this.state.userName)}
+              >
+                Proceed to Quiz
           </Button>
-          <Link to="quiz">Quiz</Link>
-        </FormItem>
-      </Form>
+              <Link to="quiz">Quiz</Link>
+            </FormItem>
+          </Form>
+        </div>
+        <div style={{ margin: '20px' }}>
+          <br/>
+          <h1>Rules</h1>
+          <ul style={{ 'list-style-type': 'disc' }} >
+            <li>Quiz will start with a timer once you click Proceed to Quiz.</li>
+            <li>You will see 10 Multiple Choice Questions. Each question has 1 mark.</li>
+            <li>Once you submit the quiz you will see a link to LeaderBoard.</li>
+            <li>LeaderBoard will be sorted by Points scored. If there is a tie in points then it will show results sorted by less time taken.</li>
+          </ul>
+        </div>
+      </div>
     );
   }
 }
