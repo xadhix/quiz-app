@@ -14,7 +14,7 @@ function RouterConfig({ history }) {
         <Header style={{ position: 'fixed', width: '100%', zIndex: 1000,  textAlign: 'center' }}>
           <h1 style={{color: 'white'}}> Quiz Competition </h1>
         </Header>
-        <Content style={{ padding: '0 50px', marginTop: 64, bottom: '8%'}}>
+        <Content style={{ padding: '0 50px', marginTop: 64, bottom: '8%' }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 600 }}>
             <Switch>
               <Route path="/" exact component={IndexPage} />
