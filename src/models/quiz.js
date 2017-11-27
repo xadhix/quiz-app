@@ -58,7 +58,6 @@ export default {
           timetaken: (new Date() - state.quiz.quiz_start)/1000,
         }
       });
-      console.log('Quiz Response ', quiz_response );
       yield put({ type: 'set_quiz_submitting'});
 
       const result = yield call(()=>new Promise((resolve, reject)=>{
